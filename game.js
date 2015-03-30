@@ -94,9 +94,8 @@ function attract(object1, object2) {
 
 //Returns a true if object is on the screen and false otherwise
 function onscreen(object) {
-	return (object.x > 0 && object.x < window.innerWidth && object.y > 0 && object.y < window.innerHeight);
+	return (object.x > -10 && object.x < window.innerWidth && object.y > -10 && object.y < window.innerHeight);
 }
-
 //Causes object2 to be repeled by object1
 //Precondition: object2 must have properties hv and vv (horizontal velocity and vertical velocity)
 function repel(object1, object2) {
