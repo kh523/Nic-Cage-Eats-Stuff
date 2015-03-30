@@ -274,6 +274,7 @@ var main = function () {
 		var y = c.height / 2 - 10;
 		ctx.textAlign = 'center';
 		ctx.fillText("Game Over!!!", x, y);
+		ctx.fillStyle = "green";
 		ctx.fillText("Press Enter to Restart", x, y + 50);
 		if (13 in keysDown) {
 			celeryeaten = 0;
