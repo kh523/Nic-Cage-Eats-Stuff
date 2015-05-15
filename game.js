@@ -44,42 +44,48 @@ function celeryfunc(x, y, hv, vv, angle) {
 	this.angle = angle || 0;
 }
 
-//Set Celery Movement State
 var protectingchicken = false;
 
 var celeryarr = [];
 
+// Adds a celery with horizontal velocity hv and vertical velocity vv
 function addcelery(hv, vv) {
 	celeryarr.push(new celeryfunc(Math.random() * window.innerWidth * 0.8, Math.random() * window.innerHeight * 0.8, hv, vv));
 }
 
+// Initialize one celery
 addcelery(4 * Math.random() + 2, 4 * Math.random() + 2);
 
 //Returns string "right" if object1 is to the right of object2 and "left" otherwise
 function horizontaldirection(object1, object2) {
 	var horizontal = object1.x - object2.x;
+	var horizontalobject1;
 	if (horizontal > 0) {
-		var horizontalobject1 = "right";
+		horizontalobject1 = "right";
 	}
 	else if (horizontal < 0) {
-		var horizontalobject1 = "left";
+		horizontalobject1 = "left";
+	}
+	else if (horizontal == 0) {
+		horizontalobject1 = "equal";
 	}
 	return horizontalobject1;
 }
 
 //Returns string "top" if object1 is above object2 and "bottom" otherwise
 function verticaldirection(object1, object2) {
-	var vertical = object1.y - object2.y + 60;
+	var vertical = object1.y - object2.y;
+	var verticalobject1;
 	if (vertical > 0) {
-		var verticalobject1 = "top";
+		verticalobject1 = "top";
 	}
 	else if (vertical < 0) {
-		var verticalobject1 = "bottom";
+		verticalobject1 = "bottom";
 	}
 	return verticalobject1;
 }
 
-//Causes object2 to be attracted to object1. 
+//Causes object2 to be attracted to object1 by changing the hv and vv of object2 in the direction of object1. 
 //Precondition: object2 must have properties hv and vv (horizontal velocity and vertical velocity)
 function attract(object1, object2) {
 	var h = horizontaldirection(object1, object2);
@@ -171,6 +177,7 @@ var update = function (modifier) {
 		circle.y = 0;
 	}
 
+	//Detects collisions with chicken
 	if (circle.x + 50 <= (chicken.x + 80) && chicken.x <= (circle.x + 40)
 		&& circle.y + 100 <= (chicken.y + 50) && chicken.y <= (circle.y + 90)) {
 		chicken.x = Math.random() * window.innerWidth * 0.8;
@@ -180,6 +187,7 @@ var update = function (modifier) {
 			addcelery(4 * Math.random() + 2, 4 * Math.random() + 2);
 		}
 	}
+
 	//Changes Celery Movement State 
 	var l = celeryarr.length;
 	if (l % 4 == 0) {
@@ -214,6 +222,8 @@ var update = function (modifier) {
 		if (celeryarr[i].y + 100 > window.innerHeight || celeryarr[i].y < 0) {
 			celeryarr[i].vv = -celeryarr[i].vv;
 		}
+
+		//Detects collisions with celery
 		if (celeryarr[i] != null && (circle.x <= (celeryarr[i].x + 80) && celeryarr[i].x <= (circle.x + 50)
 		&& circle.y + 100 <= (celeryarr[i].y + 70) && celeryarr[i].y + 30 <= (circle.y + 110))) {
 			celeryarr[i].x = Math.random() * window.innerWidth * 0.8;
@@ -245,7 +255,7 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Chicken Wings Eaten: " + chickenwingseaten, 32, 32);
+	ctx.fillText("Chicken Legs Eaten: " + chickenwingseaten, 32, 32);
 
 	ctx.fillStyle = "rgb(255,0,0)";
 	ctx.font = "24px Helvetica";
@@ -256,16 +266,8 @@ var render = function () {
 	ctx.fillStyle = "green";
 	ctx.font = "24px Helvetica";
 	ctx.fillText("Current Highscore: 69", window.innerWidth - 300, 32);
-}
 
-var main = function () {
-	var now = Date.now();
-	var delta = now - then; 
-
-	update(delta / 1000);
-	render();
-
-	then = now;
+	//Game Over
 	if (celeryeaten >= 3) {
 		ctx.clearRect(0,0, c.width, c.height);
 		ctx.fillStyle = "rgb(255,0,0)";
@@ -281,15 +283,24 @@ var main = function () {
 			chickenwingseaten = 0;
 			celeryarr = [];
 			addcelery(4 * Math.random() + 2, 4 * Math.random() + 2);
+			circle.x = c.width / 2;
+			circle.y = c.height / 2;
 		}
 	}
+}
+
+var main = function () {
+	var now = Date.now();
+	var delta = now - then; 
+
+	update(delta / 1000);
+	render();
+
+	then = now;
 
 	requestAnimationFrame(main);
 }
 
-
-
 requestAnimationFrame = window.requestAnimationFrame || window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || window.mozRequestAnimationFrame;
 var then = Date.now();
-render();
 main();
