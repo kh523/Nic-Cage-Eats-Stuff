@@ -5,38 +5,38 @@ ctx.canvas.width = window.innerWidth - 10;
 ctx.canvas.height = window.innerHeight - 20;
 
 //Set properties of items and variables
-var circle = { speed: 250, x: c.width / 2, y: c.height / 2, radius: 32 }
-var chicken = { x: 0, y: 0 };
-var chickenwingseaten = 0;
-var celeryeaten = 0;
+var player = { speed: 250, x: c.width / 2, y: c.height / 2, radius: 32 }
+var token = { x: 0, y: 0 };
+var tokenseaten = 0;
+var enemyeaten = 0;
 
 //Initialize Player
-var nicReady = false;
-var nicImage = new Image();
-nicImage.onload = function () {
-	nicReady = true;
+var playerReady = false;
+var playerImage = new Image();
+playerImage.onload = function () {
+	playerReady = true;
 }
-nicImage.src = "NicCageFace.png";
+playerImage.src = "NicCageFace.png";
 
-//Initialize Chicken
-var chickenReady = false;
-var chickenImage = new Image();
-chickenImage.onload = function () {
-	chickenReady = true;
+//Initialize Token
+var tokenReady = false;
+var tokenImage = new Image();
+tokenImage.onload = function () {
+	tokenReady = true;
 }
-chicken.x = Math.random() * window.innerWidth * 0.8;
-chicken.y = Math.random() * window.innerHeight * 0.8;
-chickenImage.src = "chicken.png";
+token.x = Math.random() * window.innerWidth * 0.8;
+token.y = Math.random() * window.innerHeight * 0.8;
+tokenImage.src = "chicken.png";
 
-//Initialize Celery
-var celeryReady = false;
-var celeryImage = new Image();
-celeryImage.onload = function () {
-	celeryReady = true;
+//Initialize Enemy
+var enemyReady = false;
+var enemyImage = new Image();
+enemyImage.onload = function () {
+	enemyReady = true;
 }
-celeryImage.src = "celery.png";
+enemyImage.src = "celery.png";
 
-function celeryfunc(x, y, hv, vv, angle) {
+function enemyfunc(x, y, hv, vv, angle) {
 	this.x = x || 0;
 	this.y = y || 0;
 	this.hv = hv || 0;
@@ -44,17 +44,17 @@ function celeryfunc(x, y, hv, vv, angle) {
 	this.angle = angle || 0;
 }
 
-var protectingchicken = false;
+var protectingtoken = false;
 
-var celeryarr = [];
+var enemyarr = [];
 
-// Adds a celery with horizontal velocity hv and vertical velocity vv
-function addcelery(hv, vv) {
-	celeryarr.push(new celeryfunc(Math.random() * window.innerWidth * 0.8, Math.random() * window.innerHeight * 0.8, hv, vv));
+// Adds an enemy with horizontal velocity hv and vertical velocity vv
+function addenemy(hv, vv) {
+	enemyarr.push(new enemyfunc(Math.random() * window.innerWidth * 0.8, Math.random() * window.innerHeight * 0.8, hv, vv));
 }
 
-// Initialize one celery
-addcelery(4 * Math.random() + 2, 4 * Math.random() + 2);
+// Initialize one enemy
+addenemy(4 * Math.random() + 2, 4 * Math.random() + 2);
 
 //Returns string "right" if object1 is to the right of object2 and "left" otherwise
 function horizontaldirection(object1, object2) {
@@ -133,7 +133,7 @@ function findangle(object1, object2) {
 
 //Causes object2 to circle around object1 at a radius r
 function circlearoundobject(object1, object2, r) {
-	var l = celeryarr.length;
+	var l = enemyarr.length;
 	object2.x = object1.x + Math.cos(object2.angle) * r;
 	object2.y = object1.y + Math.sin(object2.angle) * r;
 	object2.angle = (object2.angle + 0.04) % (2*Math.PI);
@@ -153,100 +153,100 @@ addEventListener("keyup", function (e) {
 //Updates the objects x, y coordinates
 var update = function (modifier) {
 	if (38 in keysDown) {
-		circle.y -= circle.speed * modifier;
+		player.y -= player.speed * modifier;
 	}
 	if (40 in keysDown) {
-		circle.y += circle.speed * modifier;
+		player.y += player.speed * modifier;
 	}
 	if (37 in keysDown) {
-		circle.x -= circle.speed * modifier;
+		player.x -= player.speed * modifier;
 	}
 	if (39 in keysDown) {
-		circle.x += circle.speed * modifier;
+		player.x += player.speed * modifier;
 	}
-	if (circle.x + 100 < 0) {
-		circle.x = window.innerWidth;
+	if (player.x + 100 < 0) {
+		player.x = window.innerWidth;
 	}
-	if (circle.x > window.innerWidth) {
-		circle.x = 0;
+	if (player.x > window.innerWidth) {
+		player.x = 0;
 	}
-	if (circle.y + 100 < 0) {
-		circle.y = window.innerHeight;
+	if (player.y + 100 < 0) {
+		player.y = window.innerHeight;
 	}
-	if (circle.y > window.innerHeight) {
-		circle.y = 0;
+	if (player.y > window.innerHeight) {
+		player.y = 0;
 	}
 
-	//Detects collisions with chicken
-	if (circle.x + 50 <= (chicken.x + 80) && chicken.x <= (circle.x + 40)
-		&& circle.y + 100 <= (chicken.y + 50) && chicken.y <= (circle.y + 90)) {
-		chicken.x = Math.random() * window.innerWidth * 0.8;
-		chicken.y = Math.random() * window.innerHeight * 0.8;
-		++chickenwingseaten; 
-		if (chickenwingseaten % 3 == 0) {
-			addcelery(4 * Math.random() + 2, 4 * Math.random() + 2);
+	//Detects collisions with token
+	if (player.x + 50 <= (token.x + 80) && token.x <= (player.x + 40)
+		&& player.y + 100 <= (token.y + 50) && token.y <= (player.y + 90)) {
+		token.x = Math.random() * window.innerWidth * 0.8;
+		token.y = Math.random() * window.innerHeight * 0.8;
+		++tokenseaten; 
+		if (tokenseaten % 3 == 0) {
+			addenemy(4 * Math.random() + 2, 4 * Math.random() + 2);
 		}
 	}
 
-	//Changes Celery Movement State 
-	var l = celeryarr.length;
+	//Changes Enemy Movement State 
+	var l = enemyarr.length;
 	if (l % 4 == 0) {
-		protectingchicken = true;
+		protectingtoken = true;
 	}
-	if (protectingchicken && (l % 4 == 1)) {
-		protectingchicken = false;
+	if (protectingtoken && (l % 4 == 1)) {
+		protectingtoken = false;
 	}
 	for (var i = 0; i < l; i++) {
-		if (!protectingchicken) {
-			celeryarr[i].x += celeryarr[i].hv;
-			celeryarr[i].y += celeryarr[i].vv;
-			if (!onscreen(celeryarr[i])) {
-				celeryarr[i].x = Math.random() * window.innerWidth * 0.8;
-				celeryarr[i].y = Math.random() * window.innerHeight * 0.8;
+		if (!protectingtoken) {
+			enemyarr[i].x += enemyarr[i].hv;
+			enemyarr[i].y += enemyarr[i].vv;
+			if (!onscreen(enemyarr[i])) {
+				enemyarr[i].x = Math.random() * window.innerWidth * 0.8;
+				enemyarr[i].y = Math.random() * window.innerHeight * 0.8;
 			} 
 		}
-		else if (protectingchicken) {
-			if (distance(chicken, celeryarr[i]) >= 200) {
-				attract(chicken, celeryarr[i]);
-				celeryarr[i].x += celeryarr[i].hv;
-				celeryarr[i].y += celeryarr[i].vv; 
-				celeryarr[i].angle = findangle(chicken, celeryarr[i]);
+		else if (protectingtoken) {
+			if (distance(token, enemyarr[i]) >= 200) {
+				attract(token, enemyarr[i]);
+				enemyarr[i].x += enemyarr[i].hv;
+				enemyarr[i].y += enemyarr[i].vv; 
+				enemyarr[i].angle = findangle(chicken, enemyarr[i]);
 			}
-			else if (distance(chicken, celeryarr[i]) < 200) {
-				circlearoundobject(chicken, celeryarr[i], distance(chicken, celeryarr[i]));
+			else if (distance(token, enemyarr[i]) < 200) {
+				circlearoundobject(token, enemyarr[i], distance(token, enemyarr[i]));
 			}	
 		}
-		if (celeryarr[i].x + 100 > window.innerWidth || celeryarr[i].x < 0) {
-			celeryarr[i].hv = -celeryarr[i].hv;
+		if (enemyarr[i].x + 100 > window.innerWidth || enemyarr[i].x < 0) {
+			enemyarr[i].hv = -enemyarr[i].hv;
 		}
-		if (celeryarr[i].y + 100 > window.innerHeight || celeryarr[i].y < 0) {
-			celeryarr[i].vv = -celeryarr[i].vv;
+		if (enemyarr[i].y + 100 > window.innerHeight || enemyarr[i].y < 0) {
+			enemyarr[i].vv = -enemyarr[i].vv;
 		}
 
-		//Detects collisions with celery
-		if (celeryarr[i] != null && (circle.x <= (celeryarr[i].x + 80) && celeryarr[i].x <= (circle.x + 50)
-		&& circle.y + 100 <= (celeryarr[i].y + 70) && celeryarr[i].y + 30 <= (circle.y + 110))) {
-			celeryarr[i].x = Math.random() * window.innerWidth * 0.8;
-			celeryarr[i].y = Math.random() * window.innerHeight * 0.8;
-			++celeryeaten; 
+		//Detects collisions with enemy
+		if (enemyarr[i] != null && (player.x <= (enemyarr[i].x + 80) && enemyarr[i].x <= (player.x + 50)
+		&& player.y + 100 <= (enemyarr[i].y + 70) && enemyarr[i].y + 30 <= (player.y + 110))) {
+			enemyarr[i].x = Math.random() * window.innerWidth * 0.8;
+			enemyarr[i].y = Math.random() * window.innerHeight * 0.8;
+			++enemyeaten; 
 		}
 	}
 }
 
 //Draws objects on canvas
 var render = function () {
-	if (nicReady) {
+	if (playerReady) {
 		ctx.clearRect(0,0, c.width, c.height);
-		ctx.drawImage(nicImage, circle.x, circle.y);
+		ctx.drawImage(playerImage, player.x, player.y);
 	}
-	if (chickenReady) {
-		ctx.drawImage(chickenImage, chicken.x, chicken.y);
+	if (tokenReady) {
+		ctx.drawImage(tokenImage, token.x, token.y);
 	}
-	if (celeryReady) {
-		var l = celeryarr.length;
+	if (enemyReady) {
+		var l = enemyarr.length;
 		for (var i = 0; i < l; i++) {
-			if (celeryarr[i] != null) {
-				ctx.drawImage(celeryImage, celeryarr[i].x, celeryarr[i].y);
+			if (enemyarr[i] != null) {
+				ctx.drawImage(enemyImage, enemyarr[i].x, enemyarr[i].y);
 			}
 		}
 	}
@@ -255,20 +255,20 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Chicken Legs Eaten: " + chickenwingseaten, 32, 32);
+	ctx.fillText("Chicken Legs Eaten: " + tokenseaten, 32, 32);
 
 	ctx.fillStyle = "rgb(255,0,0)";
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "bottom";
-	ctx.fillText("Don't eat Celery: " + celeryeaten + "/3", 32, 32);
+	ctx.fillText("Don't eat Celery: " + enemyeaten + "/3", 32, 32);
 
 	ctx.fillStyle = "green";
 	ctx.font = "24px Helvetica";
 	ctx.fillText("Current Highscore: 69", window.innerWidth - 300, 32);
 
 	//Game Over
-	if (celeryeaten >= 3) {
+	if (enemyeaten >= 3) {
 		ctx.clearRect(0,0, c.width, c.height);
 		ctx.fillStyle = "rgb(255,0,0)";
 		ctx.font = "24px Helvetica";
@@ -279,12 +279,12 @@ var render = function () {
 		ctx.fillStyle = "green";
 		ctx.fillText("Press Enter to Restart", x, y + 50);
 		if (13 in keysDown) {
-			celeryeaten = 0;
-			chickenwingseaten = 0;
-			celeryarr = [];
-			addcelery(4 * Math.random() + 2, 4 * Math.random() + 2);
-			circle.x = c.width / 2;
-			circle.y = c.height / 2;
+			enemyeaten = 0;
+			tokenseaten = 0;
+			enemyarr = [];
+			addenemy(4 * Math.random() + 2, 4 * Math.random() + 2);
+			player.x = c.width / 2;
+			player.y = c.height / 2;
 		}
 	}
 }
