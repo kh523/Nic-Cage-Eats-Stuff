@@ -5,7 +5,7 @@ ctx.canvas.width = window.innerWidth - 10;
 ctx.canvas.height = window.innerHeight - 20;
 
 //Set properties of items and variables
-var player = { speed: 250, x: c.width / 2, y: c.height / 2, radius: 32 }
+var player = { speed: 250, x: c.width / 2, y: c.height / 2, radius: 32, invulnerable: false, immobile: false }
 var token = { x: 0, y: 0 };
 var tokenseaten = 0;
 var enemyeaten = 0;
@@ -152,17 +152,29 @@ addEventListener("keyup", function (e) {
 
 //Updates the objects x, y coordinates
 var update = function (modifier) {
-	if (38 in keysDown) {
-		player.y -= player.speed * modifier;
+	if (!player.immobile) {
+		if (38 in keysDown) {
+			player.y -= player.speed * modifier;
+		}
+		if (40 in keysDown) {
+			player.y += player.speed * modifier;
+		}
+		if (37 in keysDown) {
+			player.x -= player.speed * modifier;
+		}
+		if (39 in keysDown) {
+			player.x += player.speed * modifier;
+		}
 	}
-	if (40 in keysDown) {
-		player.y += player.speed * modifier;
+	if (32 in keysDown) {
+		player.invulnerable = true;
+		player.immobile = true
+		playerImage.src = "NicCageFace Translucent.png";
 	}
-	if (37 in keysDown) {
-		player.x -= player.speed * modifier;
-	}
-	if (39 in keysDown) {
-		player.x += player.speed * modifier;
+	else {
+		player.invulnerable = false;
+		player.immobile = false;
+		playerImage.src = "NicCageFace.png";
 	}
 	if (player.x + 100 < 0) {
 		player.x = window.innerWidth;
@@ -210,7 +222,7 @@ var update = function (modifier) {
 				attract(token, enemyarr[i]);
 				enemyarr[i].x += enemyarr[i].hv;
 				enemyarr[i].y += enemyarr[i].vv; 
-				enemyarr[i].angle = findangle(chicken, enemyarr[i]);
+				enemyarr[i].angle = findangle(token, enemyarr[i]);
 			}
 			else if (distance(token, enemyarr[i]) < 200) {
 				circlearoundobject(token, enemyarr[i], distance(token, enemyarr[i]));
@@ -224,7 +236,7 @@ var update = function (modifier) {
 		}
 
 		//Detects collisions with enemy
-		if (enemyarr[i] != null && (player.x <= (enemyarr[i].x + 80) && enemyarr[i].x <= (player.x + 50)
+		if ((enemyarr[i] != null && (player.x <= (enemyarr[i].x + 80) && enemyarr[i].x <= (player.x + 50) && !player.invulnerable)
 		&& player.y + 100 <= (enemyarr[i].y + 70) && enemyarr[i].y + 30 <= (player.y + 110))) {
 			enemyarr[i].x = Math.random() * window.innerWidth * 0.8;
 			enemyarr[i].y = Math.random() * window.innerHeight * 0.8;
