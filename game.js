@@ -7,8 +7,8 @@ ctx.canvas.height = window.innerHeight - 20;
 //Set properties of items and variables
 var player = { speed: 250, x: c.width / 2, y: c.height / 2, radius: 32, invulnerable: false, immobile: false }
 var token = { x: 0, y: 0 };
-var tokenseaten = 0;
-var enemyeaten = 0;
+var tokensEaten = 0;
+var enemyEaten = 0;
 
 //Initialize Player
 var playerReady = false;
@@ -44,52 +44,52 @@ function enemyfunc(x, y, hv, vv, angle) {
 	this.angle = angle || 0;
 }
 
-var protectingtoken = false;
+var protectingToken = false;
 
-var enemyarr = [];
+var enemyArr = [];
 
 // Adds an enemy with horizontal velocity hv and vertical velocity vv
-function addenemy(hv, vv) {
-	enemyarr.push(new enemyfunc(Math.random() * window.innerWidth * 0.8, Math.random() * window.innerHeight * 0.8, hv, vv));
+function addEnemy(hv, vv) {
+	enemyArr.push(new enemyfunc(Math.random() * window.innerWidth * 0.8, Math.random() * window.innerHeight * 0.8, hv, vv));
 }
 
 // Initialize one enemy
-addenemy(4 * Math.random() + 2, 4 * Math.random() + 2);
+addEnemy(4 * Math.random() + 2, 4 * Math.random() + 2);
 
 //Returns string "right" if object1 is to the right of object2 and "left" otherwise
-function horizontaldirection(object1, object2) {
+function horizontalDirection(object1, object2) {
 	var horizontal = object1.x - object2.x;
-	var horizontalobject1;
+	var horizontalObject1;
 	if (horizontal > 0) {
-		horizontalobject1 = "right";
+		horizontalObject1 = "right";
 	}
 	else if (horizontal < 0) {
-		horizontalobject1 = "left";
+		horizontalObject1 = "left";
 	}
 	else if (horizontal == 0) {
-		horizontalobject1 = "equal";
+		horizontalObject1 = "equal";
 	}
-	return horizontalobject1;
+	return horizontalObject1;
 }
 
 //Returns string "top" if object1 is above object2 and "bottom" otherwise
-function verticaldirection(object1, object2) {
+function verticalDirection(object1, object2) {
 	var vertical = object1.y - object2.y;
-	var verticalobject1;
+	var verticalObject1;
 	if (vertical > 0) {
-		verticalobject1 = "top";
+		verticalObject1 = "top";
 	}
 	else if (vertical < 0) {
-		verticalobject1 = "bottom";
+		verticalObject1 = "bottom";
 	}
-	return verticalobject1;
+	return verticalObject1;
 }
 
 //Causes object2 to be attracted to object1 by changing the hv and vv of object2 in the direction of object1. 
 //Precondition: object2 must have properties hv and vv (horizontal velocity and vertical velocity)
 function attract(object1, object2) {
-	var h = horizontaldirection(object1, object2);
-	var v = verticaldirection(object1, object2);
+	var h = horizontalDirection(object1, object2);
+	var v = verticalDirection(object1, object2);
 	if ((h === "left" && object2.hv > 0) || (h === "right" && object2.hv < 0)) {
 		object2.hv = -object2.hv;
 	}
@@ -99,14 +99,14 @@ function attract(object1, object2) {
 }
 
 //Returns a true if object is on the screen and false otherwise
-function onscreen(object) {
+function onScreen(object) {
 	return (object.x > -10 && object.x < window.innerWidth && object.y > -10 && object.y < window.innerHeight);
 }
 //Causes object2 to be repeled by object1
 //Precondition: object2 must have properties hv and vv (horizontal velocity and vertical velocity)
 function repel(object1, object2) {
-	var h = horizontaldirection(object1, object2);
-	var v = verticaldirection(object1, object2);
+	var h = horizontalDirection(object1, object2);
+	var v = verticalDirection(object1, object2);
 	if ((h === "left" && object2.hv < 0) || (h === "right" && object2.hv > 0)) {
 		object2.hv = -object2.hv;
 	}
@@ -121,19 +121,19 @@ function distance(object1, object2) {
 }
 
 //Returns the angle made by object1 and object2 with respect to object1's x coordinate
-function findangle(object1, object2) {
+function findAngle(object1, object2) {
 	var x_len = object2.x - object1.x;
 	var y_len = object2.y - object1.y;
 	var angle = Math.atan(y_len/x_len);
-	if (horizontaldirection(object1, object2) === "right") {
+	if (horizontalDirection(object1, object2) === "right") {
 		angle = angle + Math.PI;
 	}
 	return angle;
 }
 
 //Causes object2 to circle around object1 at a radius r
-function circlearoundobject(object1, object2, r) {
-	var l = enemyarr.length;
+function circleAroundObject(object1, object2, r) {
+	var l = enemyArr.length;
 	object2.x = object1.x + Math.cos(object2.angle) * r;
 	object2.y = object1.y + Math.sin(object2.angle) * r;
 	object2.angle = (object2.angle + 0.04) % (2*Math.PI);
@@ -194,53 +194,53 @@ var update = function (modifier) {
 		&& player.y + 100 <= (token.y + 50) && token.y <= (player.y + 90)) {
 		token.x = Math.random() * window.innerWidth * 0.8;
 		token.y = Math.random() * window.innerHeight * 0.8;
-		++tokenseaten; 
-		if (tokenseaten % 3 == 0) {
-			addenemy(4 * Math.random() + 2, 4 * Math.random() + 2);
+		++tokensEaten; 
+		if (tokensEaten % 3 == 0) {
+			addEnemy(4 * Math.random() + 2, 4 * Math.random() + 2);
 		}
 	}
 
 	//Changes Enemy Movement State 
-	var l = enemyarr.length;
+	var l = enemyArr.length;
 	if (l % 4 == 0) {
-		protectingtoken = true;
+		protectingToken = true;
 	}
-	if (protectingtoken && (l % 4 == 1)) {
-		protectingtoken = false;
+	if (protectingToken && (l % 4 == 1)) {
+		protectingToken = false;
 	}
 	for (var i = 0; i < l; i++) {
-		if (!protectingtoken) {
-			enemyarr[i].x += enemyarr[i].hv;
-			enemyarr[i].y += enemyarr[i].vv;
-			if (!onscreen(enemyarr[i])) {
-				enemyarr[i].x = Math.random() * window.innerWidth * 0.8;
-				enemyarr[i].y = Math.random() * window.innerHeight * 0.8;
+		if (!protectingToken) {
+			enemyArr[i].x += enemyArr[i].hv;
+			enemyArr[i].y += enemyArr[i].vv;
+			if (!onScreen(enemyArr[i])) {
+				enemyArr[i].x = Math.random() * window.innerWidth * 0.8;
+				enemyArr[i].y = Math.random() * window.innerHeight * 0.8;
 			} 
 		}
-		else if (protectingtoken) {
-			if (distance(token, enemyarr[i]) >= 200) {
-				attract(token, enemyarr[i]);
-				enemyarr[i].x += enemyarr[i].hv;
-				enemyarr[i].y += enemyarr[i].vv; 
-				enemyarr[i].angle = findangle(token, enemyarr[i]);
+		else if (protectingToken) {
+			if (distance(token, enemyArr[i]) >= 200) {
+				attract(token, enemyArr[i]);
+				enemyArr[i].x += enemyArr[i].hv;
+				enemyArr[i].y += enemyArr[i].vv; 
+				enemyArr[i].angle = findAngle(token, enemyArr[i]);
 			}
-			else if (distance(token, enemyarr[i]) < 200) {
-				circlearoundobject(token, enemyarr[i], distance(token, enemyarr[i]));
+			else if (distance(token, enemyArr[i]) < 200) {
+				circleAroundObject(token, enemyArr[i], distance(token, enemyArr[i]));
 			}	
 		}
-		if (enemyarr[i].x + 100 > window.innerWidth || enemyarr[i].x < 0) {
-			enemyarr[i].hv = -enemyarr[i].hv;
+		if (enemyArr[i].x + 100 > window.innerWidth || enemyArr[i].x < 0) {
+			enemyArr[i].hv = -enemyArr[i].hv;
 		}
-		if (enemyarr[i].y + 100 > window.innerHeight || enemyarr[i].y < 0) {
-			enemyarr[i].vv = -enemyarr[i].vv;
+		if (enemyArr[i].y + 100 > window.innerHeight || enemyArr[i].y < 0) {
+			enemyArr[i].vv = -enemyArr[i].vv;
 		}
 
 		//Detects collisions with enemy
-		if ((enemyarr[i] != null && (player.x <= (enemyarr[i].x + 80) && enemyarr[i].x <= (player.x + 50) && !player.invulnerable)
-		&& player.y + 100 <= (enemyarr[i].y + 70) && enemyarr[i].y + 30 <= (player.y + 110))) {
-			enemyarr[i].x = Math.random() * window.innerWidth * 0.8;
-			enemyarr[i].y = Math.random() * window.innerHeight * 0.8;
-			++enemyeaten; 
+		if ((enemyArr[i] != null && (player.x <= (enemyArr[i].x + 80) && enemyArr[i].x <= (player.x + 50) && !player.invulnerable)
+		&& player.y + 100 <= (enemyArr[i].y + 70) && enemyArr[i].y + 30 <= (player.y + 110))) {
+			enemyArr[i].x = Math.random() * window.innerWidth * 0.8;
+			enemyArr[i].y = Math.random() * window.innerHeight * 0.8;
+			++enemyEaten; 
 		}
 	}
 }
@@ -255,10 +255,10 @@ var render = function () {
 		ctx.drawImage(tokenImage, token.x, token.y);
 	}
 	if (enemyReady) {
-		var l = enemyarr.length;
+		var l = enemyArr.length;
 		for (var i = 0; i < l; i++) {
-			if (enemyarr[i] != null) {
-				ctx.drawImage(enemyImage, enemyarr[i].x, enemyarr[i].y);
+			if (enemyArr[i] != null) {
+				ctx.drawImage(enemyImage, enemyArr[i].x, enemyArr[i].y);
 			}
 		}
 	}
@@ -267,20 +267,20 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Chicken Legs Eaten: " + tokenseaten, 32, 32);
+	ctx.fillText("Chicken Legs Eaten: " + tokensEaten, 32, 32);
 
 	ctx.fillStyle = "rgb(255,0,0)";
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "bottom";
-	ctx.fillText("Don't eat Celery: " + enemyeaten + "/3", 32, 32);
+	ctx.fillText("Don't eat Celery: " + enemyEaten + "/3", 32, 32);
 
 	ctx.fillStyle = "green";
 	ctx.font = "24px Helvetica";
 	ctx.fillText("Current Highscore: 69", window.innerWidth - 300, 32);
 
 	//Game Over
-	if (enemyeaten >= 3) {
+	if (enemyEaten >= 3) {
 		ctx.clearRect(0,0, c.width, c.height);
 		ctx.fillStyle = "rgb(255,0,0)";
 		ctx.font = "24px Helvetica";
@@ -291,10 +291,10 @@ var render = function () {
 		ctx.fillStyle = "green";
 		ctx.fillText("Press Enter to Restart", x, y + 50);
 		if (13 in keysDown) {
-			enemyeaten = 0;
-			tokenseaten = 0;
-			enemyarr = [];
-			addenemy(4 * Math.random() + 2, 4 * Math.random() + 2);
+			enemyEaten = 0;
+			tokensEaten = 0;
+			enemyArr = [];
+			addEnemy(4 * Math.random() + 2, 4 * Math.random() + 2);
 			player.x = c.width / 2;
 			player.y = c.height / 2;
 		}
