@@ -9,6 +9,7 @@ var player = { speed: 250, x: c.width / 2, y: c.height / 2, radius: 32, invulner
 var token = { x: 0, y: 0 };
 var tokensEaten = 0;
 var enemyEaten = 0;
+var highScore = 69;
 
 //Initialize Player
 var playerReady = false;
@@ -262,7 +263,13 @@ var render = function () {
 			}
 		}
 	}
-
+	
+	//Figure out highscore
+	if(tokensEaten > highScore)
+	{
+		highScore = tokensEaten;	
+	}
+	
 	ctx.fillStyle = "rgb(0,0,0)";
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
@@ -277,7 +284,7 @@ var render = function () {
 
 	ctx.fillStyle = "green";
 	ctx.font = "24px Helvetica";
-	ctx.fillText("Current Highscore: 69", window.innerWidth - 300, 32);
+	ctx.fillText("Current Highscore: " + highscore.toString(), window.innerWidth - 300, 32);
 
 	//Game Over
 	if (enemyEaten >= 3) {
