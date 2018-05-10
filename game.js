@@ -5,7 +5,7 @@ ctx.canvas.width = window.innerWidth - 10;
 ctx.canvas.height = window.innerHeight - 20;
 
 //Set properties of items and variables
-var player = { speed: 250, x: c.width / 2, y: c.height / 2, radius: 32, invulnerable: false, immobile: false }
+var player = { speed: 300, x: c.width / 2, y: c.height / 2, radius: 32, invulnerable: false, immobile: false }
 var token = { x: 0, y: 0 };
 var tokensEaten = 0;
 var enemyEaten = 0;
