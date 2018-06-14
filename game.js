@@ -49,9 +49,29 @@ var protectingToken = false;
 
 var enemyArr = [];
 
+function randomEnemyXPos()
+{
+	var x;
+	while(x > (player.x + 20) || x < (player.x - 20))
+	{
+		x = Math.random() * window.innerWidth * 0.8;
+	}
+	return x;
+}
+
+function randomEnemyYPos()
+{
+	var y;
+	while(y > (player.y + 20) || y < (player.y - 20))
+	{
+		y = Math.random() * window.innerWidth * 0.8;
+	}
+	return y;
+}
+
 // Adds an enemy with horizontal velocity hv and vertical velocity vv
 function addEnemy(hv, vv) {
-	enemyArr.push(new enemyfunc(Math.random() * window.innerWidth * 0.8, Math.random() * window.innerHeight * 0.8, hv, vv));
+	enemyArr.push(new enemyfunc(randomEnemyXPos(), randomEnemyYPos, hv, vv));
 }
 
 // Initialize one enemy
