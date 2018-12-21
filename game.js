@@ -5,10 +5,11 @@ ctx.canvas.width = window.innerWidth - 10;
 ctx.canvas.height = window.innerHeight - 20;
 
 //Set properties of items and variables
-var player = { speed: 250, x: c.width / 2, y: c.height / 2, radius: 32, invulnerable: false, immobile: false }
+var player = { speed: 300, x: c.width / 2, y: c.height / 2, radius: 32, invulnerable: false, immobile: false }
 var token = { x: 0, y: 0 };
 var tokensEaten = 0;
 var enemyEaten = 0;
+var highScore = 69;
 
 //Initialize Player
 var playerReady = false;
@@ -48,9 +49,29 @@ var protectingToken = false;
 
 var enemyArr = [];
 
+function randomEnemyXPos()
+{
+	var x;
+	while(x > (player.x + 20) || x < (player.x - 20))
+	{
+		x = Math.random() * window.innerWidth * 0.8;
+	}
+	return x;
+}
+
+function randomEnemyYPos()
+{
+	var y;
+	while(y > (player.y + 20) || y < (player.y - 20))
+	{
+		y = Math.random() * window.innerWidth * 0.8;
+	}
+	return y;
+}
+
 // Adds an enemy with horizontal velocity hv and vertical velocity vv
 function addEnemy(hv, vv) {
-	enemyArr.push(new enemyfunc(Math.random() * window.innerWidth * 0.8, Math.random() * window.innerHeight * 0.8, hv, vv));
+	enemyArr.push(new enemyfunc(randomEnemyXPos(), randomEnemyYPos, hv, vv));
 }
 
 // Initialize one enemy
@@ -262,7 +283,13 @@ var render = function () {
 			}
 		}
 	}
-
+	
+	//Figure out highscore
+	if(tokensEaten > highScore)
+	{
+		highScore = tokensEaten;	
+	}
+	
 	ctx.fillStyle = "rgb(0,0,0)";
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
@@ -277,7 +304,7 @@ var render = function () {
 
 	ctx.fillStyle = "green";
 	ctx.font = "24px Helvetica";
-	ctx.fillText("Current Highscore: 69", window.innerWidth - 300, 32);
+	ctx.fillText("Current Highscore: " + highScore.toString(), window.innerWidth - 300, 32);
 
 	//Game Over
 	if (enemyEaten >= 3) {
