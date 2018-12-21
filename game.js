@@ -304,7 +304,7 @@ var render = function () {
 
 	ctx.fillStyle = "green";
 	ctx.font = "24px Helvetica";
-	ctx.fillText("Current Highscore: " + highscore.toString(), window.innerWidth - 300, 32);
+	ctx.fillText("Current Highscore: " + highScore.toString(), window.innerWidth - 300, 32);
 
 	//Game Over
 	if (enemyEaten >= 3) {
